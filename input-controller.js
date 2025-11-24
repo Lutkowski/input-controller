@@ -109,6 +109,10 @@ export class InputContoller {
         if (!dontEnable) {
             this.enabled = true;
         }
+
+        for (const plugin of this.plugins) {
+            plugin.enable();
+        }
     }
 
     detach() {
@@ -121,6 +125,10 @@ export class InputContoller {
 
         window.removeEventListener("blur", this.onBlur);
         window.removeEventListener("focus", this.onFocus);
+
+        for (const plugin of this.plugins) {
+            plugin.disable();
+        }
     }
 
     keyDown(event) {
