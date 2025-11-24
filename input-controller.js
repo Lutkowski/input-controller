@@ -8,22 +8,45 @@ export class InputContoller {
         this.ACTION_DEACTIVATED = "input-controller:deactivate";
 
         this.actions = {};
+        this.pressedKeys = new Set();
+
+        this.keyDown = this.keyDown.bind(this);
+        this.keyUp = this.keyUp.bind(this);
+        this.onBlur = this.onBlur.bind(this);
+        this.onFocus = this.onFocus.bind(this);
+
         this.bindActions(actionsToBind);
 
-        this.pressedKeys = new Set();
+        if (target) {
+            this.attach(target);
+        }
     }
 
     bindActions(actionsToBind) {
         for (const action in actionsToBind) {
+            const existing = this.actions[action];
             const actionConfig = actionsToBind[action];
-            this.actions[action] = actionConfig;
+
+            if (existing) {
+                this.actions[action] = {
+                    keys: actionConfig.keys || existing.keys || [],
+                    enabled: actionConfig.enabled || existing.enabled || true,
+                    active: existing.active || false
+                };
+            } else {
+                this.actions[action] = {
+                    keys: actionConfig.keys || [],
+                    enabled: actionConfig.enabled || true,
+                    active: false
+                };
+            }
         }
     }
 
     enableAction(actionName) {
         const action = this.actions[actionName];
         if (!action) return;
-        action.active = true;
+        action.enabled = true;
         this.updateActions();
     }
 
@@ -108,20 +131,13 @@ export class InputContoller {
     }
 
     updateActions() {
-        if (!this.enabled || !this.focused) return;
+        if (!this.enabled || !this.focused || !this.target) return;
 
         for (const actionName in this.actions) {
             const action = this.actions[actionName];
 
             if (!action.enabled) {
-                if (action.active) {
-                    action.active = false;
-                    this.target.dispatchEvent(
-                        new CustomEvent(this.ACTION_DEACTIVATED, {
-                            detail: actionName
-                        })
-                    )
-                }
+                action.active = false;
                 continue;
             }
 
