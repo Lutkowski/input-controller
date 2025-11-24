@@ -13,4 +13,12 @@ export class InputContoller {
             this.actions[action] = actionConfig;
         }
     }
+
+    isActionActive(actionName) {
+        const action = this.actions[actionName];
+        if (action && action.enabled) {
+            return true;
+        }
+        return false;
+    }
 }
