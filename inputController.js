@@ -1,8 +1,11 @@
 export class InputContoller {
     constructor(actionsToBind = {}, target) {
         this.enabled = false;
-        this.focus = true;
+        this.focused = true;
         this.target = target;
+
+        this.ACTION_ACTIVATED = "input-controller:activate";
+        this.ACTION_DEACTIVATED = "input-controller:deactivate";
 
         this.actions = {};
         this.bindActions(actionsToBind);
@@ -19,10 +22,9 @@ export class InputContoller {
 
     isActionActive(actionName) {
         const action = this.actions[actionName];
-        if (action && action.enabled) {
-            return true;
-        }
-        return false;
+        if (!action) return false;
+        if (!action.enabled) return false;
+        return action.active === true;
     }
 
     isKeyPressed(keyCode) {
@@ -56,7 +58,7 @@ export class InputContoller {
     }
 
     keyDown(event) {
-        if (!this.enabled || !this.focus) return;
+        if (!this.enabled || !this.focused) return;
 
         const code = event.keyCode;
 
@@ -66,7 +68,7 @@ export class InputContoller {
     }
 
     keyUp(event) {
-        if (!this.enabled || !this.focus) return;
+        if (!this.enabled || !this.focused) return;
 
         const code = event.keyCode;
 
@@ -76,7 +78,7 @@ export class InputContoller {
     }
 
     onBlur() {
-        this.focus = false;
+        this.focused = false;
 
         this.pressedKeys.clear();
 
@@ -88,11 +90,11 @@ export class InputContoller {
     }
 
     onFocus() {
-        this.focus = true;
+        this.focused = true;
     }
 
     updateActions() {
-        if (!this.enabled || !this.focus) return;
+        if (!this.enabled || !this.focused) return;
 
         for (const actionName in this.actions) {
             const action = this.actions[actionName];
@@ -101,8 +103,8 @@ export class InputContoller {
                 if (action.active) {
                     action.active = false;
                     this.target.dispatchEvent(
-                        new CustomEvent("input-controller:deactivate", {
-                            detail: name
+                        new CustomEvent(this.ACTION_DEACTIVATED, {
+                            detail: actionName
                         })
                     )
                 }
@@ -117,10 +119,10 @@ export class InputContoller {
 
             action.active = isActionActive;
 
-            const eventName = isActionActive ? "input-controller:activate" : "input-controller:deactivate";
+            const eventName = isActionActive ? this.ACTION_ACTIVATED : this.ACTION_DEACTIVATED;
 
             this.target.dispatchEvent(
-                new CustomEvent(eventName, { detail: name })
+                new CustomEvent(eventName, { detail: actionName })
             );
         }
     }
