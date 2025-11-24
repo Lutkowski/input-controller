@@ -3,8 +3,11 @@ export class InputContoller {
         this.enabled = false;
         this.focus = true;
         this.target = target;
+
         this.actions = {};
         this.bindActions(actionsToBind);
+
+        this.pressedKeys = new Set();
     }
 
     bindActions(actionsToBind) {
@@ -20,5 +23,9 @@ export class InputContoller {
             return true;
         }
         return false;
+    }
+
+    isKeyPressed(keyCode) {
+        return this.pressedKeys.has(keyCode);
     }
 }
