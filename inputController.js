@@ -20,6 +20,13 @@ export class InputContoller {
         }
     }
 
+    enableAction(actionName) {
+        const action = this.actions[actionName];
+        if (!action) return;
+        action.active = true;
+        this.updateActions();
+    }
+
     isActionActive(actionName) {
         const action = this.actions[actionName];
         if (!action) return false;
