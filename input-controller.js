@@ -47,6 +47,10 @@ export class InputContoller {
         };
     }
 
+    getAction(actionName) {
+        return this.actions[actionName];
+    }
+
     bindActions(actionsToBind) {
         for (const action in actionsToBind) {
             const existing = this.actions[action];
