@@ -43,6 +43,18 @@ export class InputContoller {
         }
     }
 
+    detach() {
+        this.enabled = false;
+
+        if (!this.target) return
+
+        this.target.removeEventListener("keydown", this.keyDown);
+        this.target.removeEventListener("keyup", this.keyUp);
+
+        window.removeEventListener("blur", this.onBlur);
+        window.removeEventListener("focus", this.onFocus);
+    }
+
     keyDown(event) {
         if (!this.enabled || !this.focus) return;
 
