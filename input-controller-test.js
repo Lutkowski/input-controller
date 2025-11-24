@@ -2,8 +2,8 @@ import { InputContoller } from "./input-controller.js";
 
 const controller = new InputContoller({
     left: { keys: [37, 65], enabled: true },
-    right: { keys: [38, 68], enabled: true },
-    up: { keys: [39, 87], enabled: true },
+    right: { keys: [39, 68], enabled: true },
+    up: { keys: [38, 87], enabled: true },
     down: { keys: [40, 83], enabled: true },
 })
 
