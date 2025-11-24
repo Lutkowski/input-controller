@@ -15,10 +15,20 @@ export class InputContoller {
         this.onBlur = this.onBlur.bind(this);
         this.onFocus = this.onFocus.bind(this);
 
+        this.plugins = [];
+
         this.bindActions(actionsToBind);
 
         if (target) {
             this.attach(target);
+        }
+    }
+
+    registerPlagin(plagin) {
+        plagin.init(this);
+        this.plugins.push(plagin);
+        if (this.enabled) {
+            plagin.enable();
         }
     }
 
