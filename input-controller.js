@@ -8,10 +8,7 @@ export class InputContoller {
         this.ACTION_DEACTIVATED = "input-controller:deactivate";
 
         this.actions = {};
-        this.pressedKeys = new Set();
 
-        this.keyDown = this.keyDown.bind(this);
-        this.keyUp = this.keyUp.bind(this);
         this.onBlur = this.onBlur.bind(this);
         this.onFocus = this.onFocus.bind(this);
 
@@ -47,7 +44,7 @@ export class InputContoller {
         };
     }
 
-    getAction(actionName) {
+    getActionConfig(actionName) {
         return this.actions[actionName];
     }
 
@@ -76,14 +73,13 @@ export class InputContoller {
         const action = this.actions[actionName];
         if (!action) return;
         action.enabled = true;
-        this.updateActions();
     }
 
     disableAction(actionName) {
         const action = this.actions[actionName];
         if (!action) return;
-        action.active = false;
         action.enabled = false;
+        this.setActionState(actionName, false);
     }
 
     isActionActive(actionName) {
@@ -93,15 +89,8 @@ export class InputContoller {
         return action.active === true;
     }
 
-    isKeyPressed(keyCode) {
-        return this.pressedKeys.has(keyCode);
-    }
-
     attach(target, dontEnable) {
         this.target = target;
-
-        this.target.addEventListener("keydown", this.keyDown);
-        this.target.addEventListener("keyup", this.keyUp);
 
         window.addEventListener("blur", this.onBlur);
         window.addEventListener("focus", this.onFocus);
@@ -120,9 +109,6 @@ export class InputContoller {
 
         if (!this.target) return
 
-        this.target.removeEventListener("keydown", this.keyDown);
-        this.target.removeEventListener("keyup", this.keyUp);
-
         window.removeEventListener("blur", this.onBlur);
         window.removeEventListener("focus", this.onFocus);
 
@@ -131,66 +117,15 @@ export class InputContoller {
         }
     }
 
-    keyDown(event) {
-        if (!this.enabled || !this.focused) return;
-
-        const code = event.keyCode;
-
-        this.pressedKeys.add(code);
-
-        this.updateActions();
-    }
-
-    keyUp(event) {
-        if (!this.enabled || !this.focused) return;
-
-        const code = event.keyCode;
-
-        this.pressedKeys.delete(code);
-
-        this.updateActions();
-    }
-
     onBlur() {
         this.focused = false;
 
-        this.pressedKeys.clear();
-
         for (const name in this.actions) {
-            this.actions[name].active = false;
+            this.setActionState(name, false);
         }
-
-        this.updateActions();
     }
 
     onFocus() {
         this.focused = true;
-    }
-
-    updateActions() {
-        if (!this.enabled || !this.focused || !this.target) return;
-
-        for (const actionName in this.actions) {
-            const action = this.actions[actionName];
-
-            if (!action.enabled) {
-                action.active = false;
-                continue;
-            }
-
-            const isActionActive = action.keys.some(keyCode => this.pressedKeys.has(keyCode));
-
-            if (isActionActive === action.active) {
-                continue
-            }
-
-            action.active = isActionActive;
-
-            const eventName = isActionActive ? this.ACTION_ACTIVATED : this.ACTION_DEACTIVATED;
-
-            this.target.dispatchEvent(
-                new CustomEvent(eventName, { detail: actionName })
-            );
-        }
     }
 }

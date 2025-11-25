@@ -1,4 +1,5 @@
 import { InputContoller } from "./input-controller.js";
+import { KeyboardPlugin } from "./plugins/keyboard-plugin.js";
 
 const controller = new InputContoller({
     left: { keys: [37, 65], enabled: true },
@@ -6,6 +7,8 @@ const controller = new InputContoller({
     up: { keys: [38, 87], enabled: true },
     down: { keys: [40, 83], enabled: true },
 })
+
+controller.registerPlagin(new KeyboardPlugin());
 
 const box = document.getElementById('box');
 let x = 100;
