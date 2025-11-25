@@ -53,6 +53,7 @@ export class InputContoller {
             const existing = this.actions[action];
             const actionConfig = actionsToBind[action];
 
+
             if (existing) {
                 Object.assign(existing, actionConfig)
             } else {
