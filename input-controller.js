@@ -55,7 +55,8 @@ export class InputContoller {
 
 
             if (existing) {
-                Object.assign(existing, actionConfig)
+                const { enabled, ...rest } = actionConfig
+                Object.assign(existing, rest)
             } else {
                 this.actions[action] = {
                     enabled: actionConfig.enabled || true,
