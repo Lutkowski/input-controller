@@ -54,16 +54,12 @@ export class InputContoller {
             const actionConfig = actionsToBind[action];
 
             if (existing) {
-                this.actions[action] = {
-                    keys: actionConfig.keys || existing.keys || [],
-                    enabled: actionConfig.enabled || existing.enabled || true,
-                    active: existing.active || false
-                };
+                Object.assign(existing, actionConfig)
             } else {
                 this.actions[action] = {
-                    keys: actionConfig.keys || [],
                     enabled: actionConfig.enabled || true,
-                    active: false
+                    active: false,
+                    ...actionConfig,
                 };
             }
         }
