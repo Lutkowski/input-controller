@@ -79,9 +79,17 @@ export class InputContoller {
     disableAction(actionName) {
         const action = this.actions[actionName];
         if (!action) return;
+        const wasActive = action.active;
+
         action.enabled = false;
         action.active = false;
         action.sources = {};
+
+        if (wasActive) {
+            this.target.dispatchEvent(
+                new CustomEvent(this.ACTION_DEACTIVATED, { detail: actionName })
+            );
+        }
     }
 
     isActionActive(actionName) {
