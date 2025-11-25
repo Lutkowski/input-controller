@@ -80,7 +80,8 @@ export class InputContoller {
         const action = this.actions[actionName];
         if (!action) return;
         action.enabled = false;
-        this.setActionState(actionName, false);
+        action.active = false;
+        action.sources = {};
     }
 
     isActionActive(actionName) {
