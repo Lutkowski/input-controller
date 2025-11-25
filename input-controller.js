@@ -27,6 +27,7 @@ export class InputContoller {
     }
 
     setActionState(actionName, source, isActive) {
+        if (!this.enabled || !this.focused) return;
         const action = this.actions[actionName];
         if (!action || !action.enabled) return;
 

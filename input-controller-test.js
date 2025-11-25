@@ -10,7 +10,7 @@ const controller = new InputContoller({
 })
 
 controller.registerPlugin(new KeyboardPlugin(), "keyboard");
-// controller.registerPlugin(new MousePlugin());
+controller.registerPlugin(new MousePlugin(), "mouse");
 
 const box = document.getElementById('box');
 let x = 100;
