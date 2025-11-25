@@ -57,7 +57,7 @@ export class MousePlugin {
             if (actionConfig.mouseButton !== undefined) {
                 isActive = this.pressedButtons.has(actionConfig.mouseButton);
             }
-            this.controller.setActionState(actionName, isActive);
+            this.controller.setActionState(actionName, "mouse", isActive);
         }
     }
 }

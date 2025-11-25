@@ -55,7 +55,7 @@ export class KeyboardPlugin {
 
             if (actionConfig.keys && actionConfig.keys.length > 0) {
                 const isActive = actionConfig.keys.some(key => this.pressedKeys.has(key))
-                this.controller.setActionState(actionName, isActive);
+                this.controller.setActionState(actionName, "keyboard", isActive);
             }
         }
     }

@@ -29,15 +29,19 @@ export class InputContoller {
         }
     }
 
-    setActionState(actionName, isActive) {
+    setActionState(actionName, source, isActive) {
         const action = this.actions[actionName];
-
         if (!action || !action.enabled) return;
-        if (action.active === isActive) return;
 
-        action.active = isActive;
+        if (!action.sources) action.sources = {};
+        action.sources[source] = isActive;
 
-        const eventName = isActive ? this.ACTION_ACTIVATED : this.ACTION_DEACTIVATED;
+        const state = Object.values(action.sources).some(s => s === true)
+        if (state === action.active) return
+
+        action.active = state;
+
+        const eventName = state ? this.ACTION_ACTIVATED : this.ACTION_DEACTIVATED;
 
         if (this.target) {
             this.target.dispatchEvent(new CustomEvent(eventName, { detail: actionName }))
