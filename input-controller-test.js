@@ -9,8 +9,8 @@ const controller = new InputContoller({
     down: { keys: [40, 83], enabled: true },
 })
 
-controller.registerPlagin(new KeyboardPlugin());
-controller.registerPlagin(new MousePlugin());
+controller.registerPlugin(new KeyboardPlugin(), "keyboard");
+// controller.registerPlugin(new MousePlugin());
 
 const box = document.getElementById('box');
 let x = 100;

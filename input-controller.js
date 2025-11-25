@@ -21,12 +21,9 @@ export class InputContoller {
         }
     }
 
-    registerPlagin(plagin) {
-        plagin.init(this);
-        this.plugins.push(plagin);
-        if (this.enabled) {
-            plagin.enable();
-        }
+    registerPlugin(plugin, sourceId) {
+        plugin.init(sourceId);
+        this.plugins.push({ plugin, sourceId });
     }
 
     setActionState(actionName, source, isActive) {
@@ -65,6 +62,7 @@ export class InputContoller {
                 this.actions[action] = {
                     enabled: actionConfig.enabled || true,
                     active: false,
+                    sources: {},
                     ...actionConfig,
                 };
             }
@@ -86,6 +84,7 @@ export class InputContoller {
 
     isActionActive(actionName) {
         const action = this.actions[actionName];
+        if (!this.enabled || !this.focused) return false;
         if (!action) return false;
         if (!action.enabled) return false;
         return action.active === true;
@@ -101,8 +100,12 @@ export class InputContoller {
             this.enabled = true;
         }
 
-        for (const plugin of this.plugins) {
-            plugin.enable();
+        for (const { plugin, sourceId }
+            of this.plugins) {
+            const emit = (actionName, isActive) =>
+                this.setActionState(actionName, sourceId, isActive);
+
+            plugin.enable(target, emit, this.actions);
         }
     }
 
@@ -114,8 +117,9 @@ export class InputContoller {
         window.removeEventListener("blur", this.onBlur);
         window.removeEventListener("focus", this.onFocus);
 
-        for (const plugin of this.plugins) {
-            plugin.disable();
+        for (const { plugin }
+            of this.plugins) {
+            plugin.disable(this.target);
         }
     }
 
@@ -123,7 +127,11 @@ export class InputContoller {
         this.focused = false;
 
         for (const name in this.actions) {
-            this.setActionState(name, false);
+            const action = this.actions[name];
+            if (!action.sources) continue;
+
+            for (const source in action.sources) action.sources[source] = false;
+            action.active = false;
         }
     }
 
